@@ -189,7 +189,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **kaushalpemmaraju** - [GitHub Profile](https://github.com/kaushalpemmaraju)
 
-Project Link: [https://github.com/CodingCow123/Mosquito-Detection](https://github.com/CodingCow123/Mosquito-Detection)
+Project Link: [https://github.com/kaushalpemmaraju/Mosquito-Detection](https://github.com/CodingCow123/Mosquito-Detection)
 
 ---
 
