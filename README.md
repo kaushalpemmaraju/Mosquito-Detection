@@ -23,7 +23,7 @@ A deep learning-powered web application that can detect mosquitoes in images usi
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/CodingCow123/Mosquito-Detection.git
+   git clone https://github.com/kaushalpemmaraju/Mosquito-Detection.git
    cd Mosquito-Detection
    ```
 
@@ -32,12 +32,19 @@ A deep learning-powered web application that can detect mosquitoes in images usi
    pip install -r requirements.txt
    ```
 
-3. **Run the web application**
+3. **Train the model**
+   ```bash
+   # Open the training notebook
+   jupyter notebook Model_training.ipynb
+   # Run all cells to train and save the model
+   ```
+
+4. **Run the web application**
    ```bash
    python app.py
    ```
 
-4. **Open your browser** and navigate to `http://localhost:5000`
+5. **Open your browser** and navigate to `http://localhost:5001`
 
 ## 📊 Model Training
 
@@ -83,12 +90,14 @@ Mosquito-Detection/
 ├── data/                    # Training dataset
 │   ├── Mosquito/           # Mosquito images
 │   └── Not_mosquito/       # Non-mosquito images
-├── model/                   # Saved model files
-│   ├── mosquito_detection_model.pth  # Trained model weights
-│   └── class_names.txt      # Class labels
-└── templates/               # HTML templates
-    └── index.html          # Web interface
+├── templates/               # HTML templates
+│   └── index.html          # Web interface
+└── model/                   # Saved model files (generated after training)
+    ├── mosquito_detection_model.pth  # Trained model weights
+    └── class_names.txt      # Class labels
 ```
+
+**Note**: The `model/` contents are generated after training and may not be included in the repository initially.
 
 ## 🔧 Technical Details
 
@@ -187,9 +196,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
+## 📞 Contact
+
 **kaushalpemmaraju** - [GitHub Profile](https://github.com/kaushalpemmaraju)
 
-Project Link: [https://github.com/kaushalpemmaraju/Mosquito-Detection](https://github.com/CodingCow123/Mosquito-Detection)
+Project Link: [https://github.com/kaushalpemmaraju/Mosquito-Detection](https://github.com/kaushalpemmaraju/Mosquito-Detection)
 
 ---
 
