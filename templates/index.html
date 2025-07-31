@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mosquito Detection App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 50px 20px;
+            margin: 30px 0;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .prediction-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .confidence {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .probabilities {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .prob-item {
+            flex: 1;
+            padding: 10px;
+            margin: 0 5px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 10px;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦟 Mosquito Detection</h1>
+        <p>Upload an image to detect if it contains a mosquito</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Drag & drop your image here or click to select</div>
+            <button class="upload-btn" type="button">Choose File</button>
+            <input type="file" class="file-input" id="fileInput" accept="image/*">
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing image...</p>
+        </div>
+
+        <div class="result" id="result">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showResult('Please select a valid image file.', 'error');
+                return;
+            }
+
+            // Show preview image
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const existingImg = document.querySelector('.preview-image');
+                if (existingImg) {
+                    existingImg.remove();
+                }
+                
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'preview-image';
+                uploadArea.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+
+            // Upload and predict
+            uploadFile(file);
+        }
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                if (data.error) {
+                    showResult(data.error, 'error');
+                } else {
+                    showPrediction(data);
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                showResult('Error: ' + error.message, 'error');
+            });
+        }
+
+        function showResult(message, type) {
+            result.innerHTML = `<div class="prediction-title">${message}</div>`;
+            result.className = `result ${type}`;
+            result.style.display = 'block';
+        }
+
+        function showPrediction(data) {
+            const isMosquito = data.prediction === 'Mosquito';
+            const icon = isMosquito ? '🦟' : '❌';
+            const message = isMosquito ? 'Mosquito Detected!' : 'No Mosquito Detected';
+            
+            result.innerHTML = `
+                <div class="prediction-title">${icon} ${message}</div>
+                <div class="confidence">Confidence: ${data.confidence}</div>
+                <div class="probabilities">
+                    ${Object.entries(data.probabilities).map(([className, prob]) => 
+                        `<div class="prob-item">
+                            <strong>${className === 'Not_mosquito' ? 'Not a mosquito' : className}</strong><br>
+                            ${prob.toFixed(1)}%
+                        </div>`
+                    ).join('')}
+                </div>
+            `;
+            result.className = 'result success';
+            result.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
