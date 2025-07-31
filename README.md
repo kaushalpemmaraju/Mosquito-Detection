@@ -183,6 +183,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **EfficientNet Authors** for the efficient CNN architecture
 - **ImageNet** for providing pre-trained weights
 - **Flask Community** for the lightweight web framework
+- **Kaggle Dataset**: Mosquito images from [Insects Dataset](https://www.kaggle.com/datasets/ismail703/insects/data) by ismail703
 
 ## 📞 Contact
 
