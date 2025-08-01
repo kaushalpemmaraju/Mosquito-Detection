@@ -1,0 +1,4 @@
+flask==2.3.3
+torch
+torchvision
+Pillow==9.5.0

@@ -194,7 +194,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Flask Community** for the lightweight web framework
 - **Kaggle Dataset**: Mosquito images from [Insects Dataset](https://www.kaggle.com/datasets/ismail703/insects/data) by ismail703
 
-## 📞 Contact
 
 ## 📞 Contact
 
